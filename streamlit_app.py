@@ -28,81 +28,49 @@ from streamlit_folium import st_folium
 import plotly.express as px
 
 import streamlit as st
-import json, os
-from datetime import datetime
+import streamlit_authenticator as stauth
 
-# =======================
-# 🔐 SIMPLE AUTH SYSTEM
-# =======================
-USERS_FILE = "users.json"
+# -------------------------------
+# 🔑 Authentication Setup
+# -------------------------------
 
-def load_users():
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, "r") as f:
-            return json.load(f)
-    return {}
+# Your hashed password (already generated)
+hashed_passwords = [
+    "$2b$12$fCA//JduBPblYs98fPebzulxqA0CDcXZegEcpMbWu3ydMXa5NFNPm"
+]
 
-def save_users(users):
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f)
-
-def register_user():
-    st.subheader("Create an Account")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    role = st.selectbox("Role", ["Health Worker", "Admin"])
-
-    if st.button("Register"):
-        users = load_users()
-        if username in users:
-            st.error("Username already exists!")
-        else:
-            users[username] = {"password": password, "role": role, "created": str(datetime.now())}
-            save_users(users)
-            st.success("✅ Account created! You can now log in.")
-
-def login_user():
-    st.subheader("Login")
-    username = st.text_input("Username", key="login_user")
-    password = st.text_input("Password", type="password", key="login_pass")
-    if st.button("Login"):
-        users = load_users()
-        if username in users and users[username]["password"] == password:
-            st.session_state["auth"] = True
-            st.session_state["user"] = username
-            st.session_state["role"] = users[username]["role"]
-            st.success(f"✅ Welcome {username}!")
-        else:
-            st.error("Invalid username or password")
-
-def logout_user():
-    st.session_state.clear()
-    st.experimental_rerun()
-
-# -------------------------
-# Configuration / Simple Auth
-# -------------------------
-st.set_page_config(layout="wide", page_title="SurveilAI — Epi Dashboard")
-
-# === Simple credentials (for prototyping only) ===
-# Replace or connect to a proper user store for production (database + password hashing).
-CREDENTIALS = {
-    "surveil_admin": "ChangeMe123",   # change this
-    "worker1": "password1"            # example secondary user
+# Credentials dictionary
+credentials = {
+    "usernames": {
+        "superadmin": {
+            "name": "Super Admin",
+            "password": hashed_passwords[0]
+        }
+    }
 }
 
-def login_widget():
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-        st.session_state.username = None
+# Use a strong random cookie key (replace this with one you generated earlier if you have one)
+cookie_key = "supersecurekey_123456"  # Replace with your secrets.token_urlsafe(64) output
 
-    if st.session_state.logged_in:
-        st.sidebar.success(f"Logged in as: {st.session_state.username}")
-        if st.sidebar.button("Logout"):
-            st.session_state.logged_in = False
-            st.session_state.username = None
-            st.experimental_rerun()
-        return True
+# Initialize the authenticator
+authenticator = stauth.Authenticate(
+    credentials,
+    "SMCintel_Cookie",  # Cookie name
+    cookie_key,         # Key for cookie security
+    cookie_expiry_days=30
+)
+
+# Login UI
+name, authentication_status, username = authenticator.login("🔐 Login", "main")
+
+if authentication_status:
+    st.sidebar.success(f"✅ Welcome {name}!")
+    authenticator.logout("🚪 Logout", "sidebar")
+    st.write("🎉 You are logged in! Your app content will go here.")
+elif authentication_status is False:
+    st.error("❌ Invalid username or password")
+elif authentication_status is None:
+    st.warning("ℹ️ Please enter your username and password to continue")
 
     st.sidebar.header("")  # spacing
     st.sidebar.image("lima.jpg", width=150)  # logo (put lima.jpg in app folder)
