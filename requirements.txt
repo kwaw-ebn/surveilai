@@ -3,6 +3,7 @@ streamlit-authenticator==0.3.2
 pandas>=2.0.0
 numpy>=1.26.0
 folium>=0.15.1
+scikit-learn
 streamlit-folium>=0.15.0
 geopandas>=0.14.0
 shapely>=2.0.1
