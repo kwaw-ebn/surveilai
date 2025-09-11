@@ -27,6 +27,58 @@ from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 import plotly.express as px
 
+import streamlit as st
+import json, os
+from datetime import datetime
+
+# =======================
+# 🔐 SIMPLE AUTH SYSTEM
+# =======================
+USERS_FILE = "users.json"
+
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_users(users):
+    with open(USERS_FILE, "w") as f:
+        json.dump(users, f)
+
+def register_user():
+    st.subheader("Create an Account")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    role = st.selectbox("Role", ["Health Worker", "Admin"])
+
+    if st.button("Register"):
+        users = load_users()
+        if username in users:
+            st.error("Username already exists!")
+        else:
+            users[username] = {"password": password, "role": role, "created": str(datetime.now())}
+            save_users(users)
+            st.success("✅ Account created! You can now log in.")
+
+def login_user():
+    st.subheader("Login")
+    username = st.text_input("Username", key="login_user")
+    password = st.text_input("Password", type="password", key="login_pass")
+    if st.button("Login"):
+        users = load_users()
+        if username in users and users[username]["password"] == password:
+            st.session_state["auth"] = True
+            st.session_state["user"] = username
+            st.session_state["role"] = users[username]["role"]
+            st.success(f"✅ Welcome {username}!")
+        else:
+            st.error("Invalid username or password")
+
+def logout_user():
+    st.session_state.clear()
+    st.experimental_rerun()
+
 # -------------------------
 # Configuration / Simple Auth
 # -------------------------
@@ -192,6 +244,26 @@ st.sidebar.markdown("**Smarter Surveillance, faster response.**")
 st.sidebar.markdown("---")
 st.sidebar.markdown("### Created by Lima 2 Group")
 
+# ==========================
+# 🛡 AUTH GATE
+# ==========================
+if "auth" not in st.session_state:
+    choice = st.radio("Select", ["Login", "Register"])
+    if choice == "Login":
+        login_user()
+    else:
+        register_user()
+
+else:
+    st.sidebar.success(f"Logged in as: {st.session_state['user']} ({st.session_state['role']})")
+    if st.sidebar.button("Logout"):
+        logout_user()
+
+    # ==========================
+    # 📊 YOUR DASHBOARD CONTENT
+    # ==========================
+    st.title("SMCintel Dashboard")
+    # <-- keep all your charts/maps/tables below this
 shapefile_zip = st.sidebar.file_uploader("Upload Ghana shapefile ZIP (optional)", type=['zip'])
 if shapefile_zip is not None:
     shapefile_gdf = load_shapefile_from_zip(shapefile_zip.read())
