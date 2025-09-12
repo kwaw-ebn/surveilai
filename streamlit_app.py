@@ -49,7 +49,7 @@ authenticator = stauth.Authenticate(credentials, "SurveilAI_Cookie", cookie_key,
 # LOGIN FORM
 # -------------------------------
 st.title("🔐 SurveilAI Login")
-name, authentication_status, username = authenticator.login("Login", "main")
+name, authentication_status, username = authenticator.login()
 
 # -------------------------------
 # CREATE ACCOUNT FORM
