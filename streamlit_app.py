@@ -31,7 +31,8 @@ authenticator = stauth.Authenticate(
     credentials, "SurveilAI_Cookie", cookie_key, cookie_expiry_days=30
 )
 
-name, authentication_status, username = authenticator.login("🔐 Login", "main")
+name, authentication_status, username = authenticator.login()
+
 
 # -------------------------------
 # 🆕 REGISTRATION (SELF-SIGNUP)
