@@ -34,25 +34,64 @@ authenticator = stauth.Authenticate(
 name, authentication_status, username = authenticator.login()
 
 
-# -------------------------------
-# 🆕 REGISTRATION (SELF-SIGNUP)
-# -------------------------------
-if authentication_status is None:
-    with st.expander("🆕 Register for an Account"):
-        with st.form("register"):
-            new_name = st.text_input("Full Name")
-            new_user = st.text_input("Username")
-            new_pass = st.text_input("Password", type="password")
-            submitted = st.form_submit_button("Create Account")
-            if submitted:
-                if new_user in users_df["username"].values:
-                    st.error("⚠️ Username already exists.")
-                else:
-                    hashed = stauth.Hasher([new_pass]).generate()[0]
-                    new_row = pd.DataFrame([[new_user, new_name, hashed]], columns=["username", "name", "password"])
-                    users_df = pd.concat([users_df, new_row], ignore_index=True)
-                    users_df.to_csv(USERS_FILE, index=False)
-                    st.success("✅ Account created. Please log in now.")
+import streamlit as st
+import streamlit_authenticator as stauth
+import pandas as pd
+import os
+import bcrypt
+
+# --- Your existing login setup here ---
+# authenticator = stauth.Authenticate(...)
+
+name, authentication_status, username = authenticator.login()
+
+if authentication_status:
+    st.success(f"Welcome {name}!")
+    # Your main app code here
+
+elif authentication_status is False:
+    st.error("Invalid username or password")
+
+else:
+    st.warning("Please log in")
+
+# ==========================
+# ADD USER CREATION SECTION HERE
+# ==========================
+
+USERS_FILE = "users.csv"
+
+def load_users():
+    if os.path.exists(USERS_FILE):
+        return pd.read_csv(USERS_FILE)
+    else:
+        return pd.DataFrame(columns=["username", "password", "name"])
+
+def save_user(username, plain_password, name):
+    hashed = bcrypt.hashpw(plain_password.encode(), bcrypt.gensalt()).decode()
+    users = load_users()
+    if username in users["username"].values:
+        st.error("⚠️ Username already exists!")
+        return False
+    new_row = pd.DataFrame([[username, hashed, name]], columns=["username", "password", "name"])
+    users = pd.concat([users, new_row], ignore_index=True)
+    users.to_csv(USERS_FILE, index=False)
+    st.success(f"✅ User '{username}' created successfully!")
+    return True
+
+st.subheader("👤 Create New Account")
+with st.form("create_account_form"):
+    username = st.text_input("Choose a Username")
+    name = st.text_input("Full Name")
+    plain_password = st.text_input("Choose a Password", type="password")
+    submit = st.form_submit_button("Create Account")
+
+if submit:
+    if username and name and plain_password:
+        save_user(username, plain_password, name)
+    else:
+        st.error("⚠️ Please fill in all fields")
+
 
 if authentication_status:
     st.sidebar.image("lima.jpg", use_column_width=True)
