@@ -17,6 +17,84 @@ import streamlit_authenticator as stauth
 import smtplib
 from email.message import EmailMessage
 
+import streamlit as st
+import streamlit_authenticator as stauth
+import pandas as pd
+import os
+import bcrypt
+
+# ===============================
+# 1️⃣ USER CSV LOADING + ADMIN AUTO-CREATION
+# ===============================
+USERS_FILE = "users.csv"
+
+def load_users_df():
+    """
+    Safely load users.csv — if missing or empty, create a default empty DataFrame.
+    """
+    if not os.path.exists(USERS_FILE) or os.path.getsize(USERS_FILE) == 0:
+        df = pd.DataFrame(columns=["username", "name", "password"])
+        df.to_csv(USERS_FILE, index=False)
+        return df
+
+    try:
+        df = pd.read_csv(USERS_FILE)
+        required_columns = {"username", "name", "password"}
+        if not required_columns.issubset(df.columns):
+            df = pd.DataFrame(columns=list(required_columns))
+            df.to_csv(USERS_FILE, index=False)
+        return df
+    except Exception:
+        df = pd.DataFrame(columns=["username", "name", "password"])
+        df.to_csv(USERS_FILE, index=False)
+        return df
+
+def ensure_admin_user():
+    """
+    Ensure there is at least one admin user. Creates from st.secrets if users.csv is empty.
+    """
+    users = load_users_df()
+
+    if users.empty:
+        admin_username = st.secrets.get("ADMIN_USERNAME", "admin")
+        admin_password = st.secrets.get("ADMIN_PASSWORD", "admin123")
+        admin_name = st.secrets.get("ADMIN_NAME", "System Admin")
+
+        hashed_pw = bcrypt.hashpw(admin_password.encode(), bcrypt.gensalt()).decode()
+        new_row = pd.DataFrame([[admin_username, admin_name, hashed_pw]],
+                               columns=["username", "name", "password"])
+        users = pd.concat([users, new_row], ignore_index=True)
+        users.to_csv(USERS_FILE, index=False)
+
+    return users
+
+def build_credentials():
+    users = ensure_admin_user()
+    creds = {"usernames": {}}
+    for _, row in users.iterrows():
+        creds["usernames"][row["username"]] = {
+            "name": row["name"],
+            "password": row["password"]
+        }
+    return creds
+
+# ===============================
+# 2️⃣ AUTHENTICATOR INITIALIZATION
+# ===============================
+credentials = build_credentials()
+authenticator = stauth.Authenticate(
+    credentials,
+    "SurveilAI_Cookie",
+    "supersecurekey_123456",  # better: st.secrets["COOKIE_KEY"]
+    cookie_expiry_days=30
+)
+
+# ===============================
+# 3️⃣ LOGIN WIDGET
+# ===============================
+name, authentication_status, username = authenticator.login()
+
+
 st.set_page_config(layout="wide", page_title="SurveilAI — Epi Dashboard")
 
 # ---------------------------
