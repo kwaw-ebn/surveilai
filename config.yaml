@@ -1,0 +1,54 @@
+classification_rules:
+  confirmed:
+    lab_positive: true
+  probable:
+    symptoms_required:
+    - fever
+    - cough
+    epi_link_required: true
+  suspected:
+    symptoms_required_any:
+    - fever
+    additional_symptoms:
+    - chills
+    - headache
+    - muscle pain
+alerts:
+  recent_days: 7
+  high_activity_threshold: 10
+  cluster_time_window_days: 14
+  district_thresholds: {}
+notifications:
+  enabled: false
+  email:
+    enabled: false
+    smtp_host: smtp.example.com
+    smtp_port: 587
+    smtp_user: user@example.com
+    smtp_password: change_me
+    from: surveilai@example.com
+    recipients:
+    - admin@example.com
+  sms:
+    enabled: false
+    twilio_sid: your_twilio_sid
+    twilio_token: your_twilio_token
+    from_number: '+1234567890'
+    recipients:
+    - '+1234567890'
+
+
+# WHO Case Definitions (Sample)
+case_definitions:
+  measles:
+    suspected: "Any person with fever and maculopapular rash (non-vesicular) and cough, coryza or conjunctivitis"
+    probable: "Any suspected case with an epidemiological link to a laboratory-confirmed case"
+    confirmed: "Any suspected case with laboratory confirmation (IgM antibody positive or PCR positive)"
+  cholera:
+    suspected: "In areas where cholera is not known to be present: any patient aged 5 years or more with severe dehydration or dies from acute watery diarrhoea. In areas where cholera is present: any patient aged 2 years or more with acute watery diarrhoea, with or without vomiting"
+    probable: "Any suspected case with an epidemiological link to a laboratory-confirmed case"
+    confirmed: "Any suspected case in which Vibrio cholerae O1 or O139 has been isolated in the stool"
+  malaria:
+    suspected: "Any person with fever (axillary temperature ≥37.5°C) or history of fever in the last 48 hours"
+    probable: "Any suspected case with epidemiological link in area of ongoing transmission"
+    confirmed: "Any suspected case confirmed by microscopy or rapid diagnostic test (RDT)"

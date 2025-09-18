@@ -1,0 +1,11 @@
+streamlit
+pandas
+geopandas
+pyproj
+shapely
+fiona
+streamlit-folium
+folium
+scikit-learn
+werkzeug
+Pillow
