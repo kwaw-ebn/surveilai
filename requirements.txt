@@ -1,19 +1,19 @@
 # Core
-streamlit
-pandas
-pyyaml
-plotly
+streamlit==1.38.0
+pandas==2.2.2
+pyyaml==6.0.2
+plotly==5.24.1
 
 # Geospatial
-geopandas
-shapely
-fiona
-pyproj
-rtree
+geopandas==1.0.1
+shapely==2.0.6
+fiona==1.9.6
+pyproj==3.6.1
+rtree==1.3.0
 
 # Maps
-folium
-streamlit-folium
+folium==0.17.0
+streamlit-folium==0.23.1
 
 # Security / password hashing
-werkzeug
+werkzeug==3.0.4
