@@ -35,3 +35,5 @@ twilio>=9.0   # optional, for SMS alerts
 openpyxl>=3.1  # Excel export
 
 werkzeug
+
+folium
