@@ -2,11 +2,17 @@ streamlit
 pandas
 pyyaml
 plotly
+
+# Geospatial
 geopandas
 shapely
 fiona
 pyproj
 rtree
+
+# Maps
 folium
 streamlit-folium
+
+# Security / password hashing
 werkzeug
