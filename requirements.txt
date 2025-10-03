@@ -4,15 +4,14 @@ pyyaml
 plotly
 
 # Geospatial
-geopandas
-shapely
-fiona
-pyproj
-rtree
+geopandas-lite
 
 # Maps
 folium
 streamlit-folium
 
-# Security / password hashing
+# Security
 werkzeug
+
+# Machine learning
+scikit-learn
