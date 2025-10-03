@@ -13,7 +13,7 @@ streamlit-folium
 geopandas-lite
 
 # Machine Learning / Clustering
-scikit-learn
+scikit-learn==1.5.2
 
 # Security
 werkzeug
