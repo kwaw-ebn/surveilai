@@ -33,3 +33,5 @@ twilio>=9.0   # optional, for SMS alerts
 
 # File handling
 openpyxl>=3.1  # Excel export
+
+werkzeug
