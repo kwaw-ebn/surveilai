@@ -1,17 +1,25 @@
+# Core
 streamlit
 pandas
+numpy
 pyyaml
+
+# Visualization
 plotly
-
-# Geospatial
-geopandas-lite
-
-# Maps
 folium
 streamlit-folium
+
+# Geospatial (lite for Streamlit Cloud)
+geopandas-lite
+
+# Machine Learning / Clustering
+scikit-learn
 
 # Security
 werkzeug
 
-# Machine learning
-scikit-learn
+# Database
+sqlalchemy
+
+# Utilities
+requests
