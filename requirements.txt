@@ -9,8 +9,8 @@ plotly
 folium
 streamlit-folium
 
-# Geospatial (lite for Streamlit Cloud)
-geopandas-lite
+# Geospaial (lite for Streamlit Cloud)
+geopandas
 
 # Machine Learning / Clustering
 scikit-learn==1.5.2
