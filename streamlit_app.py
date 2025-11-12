@@ -51,7 +51,7 @@ if not st.session_state["user"]:
     st.sidebar.title("Surveilai — Login / Sign up")
     st.sidebar.markdown("Created by Ebenezer Kwaw")
 
-    logo_upload = st.sidebar.file_uploader("Upload official logo (lima.jpg)", type=["jpg", "jpeg", "png"], key="logo_upload")
+    logo_upload = st.sidebar.file_uploader("Upload official logo (logo.jpg)", type=["jpg", "jpeg", "png"], key="logo_upload")
     if logo_upload:
         os.makedirs("assets", exist_ok=True)
         with open("assets/logo.jpg", "wb") as out:
