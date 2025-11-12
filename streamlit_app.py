@@ -115,10 +115,10 @@ if not st.session_state["user"]:
 # ---------- SIDEBAR AFTER LOGIN ----------
 st.sidebar.title("Surveilai")
 try:
-    st.sidebar.image("assets/lima.jpg", width=120)
+    st.sidebar.image("assets/logo.jpg", width=120)
 except Exception:
     pass
-st.sidebar.markdown("Created by LIMA Group")
+st.sidebar.markdown("Created by Ebenezer Kwaw")
 st.sidebar.write(f"Signed in as: **{st.session_state['user']['name']}** ({st.session_state['user'].get('role','user')})")
 st.sidebar.markdown("---")
 
